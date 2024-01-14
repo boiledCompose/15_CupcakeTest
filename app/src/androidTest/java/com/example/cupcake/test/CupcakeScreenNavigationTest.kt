@@ -4,21 +4,23 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.NavController
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import com.example.cupcake.CupcakeApp
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import com.example.cupcake.R
 
 //newly created test route must be "src > androidTest > java > <package route same as app> > test"
+@get: Rule
+val composeTestRule
+    = createAndroidComposeRule<ComponentActivity>()
 
 class CupcakeScreenNavigationTest {
 
-    @get: Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     /*탐색 상태를 확인하는 용도*/
     private lateinit var navController: TestNavHostController
@@ -42,10 +44,10 @@ class CupcakeScreenNavigationTest {
         /**
          * 탐색을 위해 사용되는 경로들을 포함하는 enum class
          */
-        Start(title = com.example.cupcake.R.string.app_name),
-        Flavor(title = com.example.cupcake.R.string.choose_flavor),
-        Pickup(title = com.example.cupcake.R.string.choose_pickup_date),
-        Summary(title = com.example.cupcake.R.string.order_summary)
+        Start(title = R.string.app_name),
+        Flavor(title = R.string.choose_flavor),
+        Pickup(title = R.string.choose_pickup_date),
+        Summary(title = R.string.order_summary)
     }
 
     @Test
@@ -56,6 +58,31 @@ class CupcakeScreenNavigationTest {
          */
         navController.assertCurrentRouteName(CupcakeScreen.Start.name)
     }
+
+    @Test
+    fun cupcakeNavHost_verifyBackNavigationNotShownOnStartOrderScreen() {
+        val backText = composeTestRule.activity.getString(R.string.back_button)
+        composeTestRule.onNodeWithContentDescription(backText).assertDoesNotExist()
+    }
+
+    @Test
+    fun cupcakeNavHost_clickOneCupcake_navigatesToSelectFlavorScreen() {
+        composeTestRule.onNodeWithStringId(R.string.one_cupcake)
+            .performClick()
+        navController.assertCurrentRouteName(CupcakeScreen.Flavor.name)
+    }
+
+    private fun navigateToFlavorScreen() {
+        composeTestRule.onNodeWithStringId(R.string.one_cupcake)
+            .performClick()
+        composeTestRule.onNodeWithStringId(R.string.chocolate)
+            .performClick()
+        
+    }
+
+
+
+
 }
 
 
