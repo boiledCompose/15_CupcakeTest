@@ -55,3 +55,70 @@ UI를 테스트하려면 Compose 테스트 규칙이 필요하다. 이는 Naviga
    ```
 
 ## 테스트 작성
+
+```kotlin
+@Test
+fun cupcakeNavHost_clickNextOnFlavorScreen_navigatesToPickupScreen() {
+    navigateToFlavorScreen()
+    composeTestRule.onNodeWithStringId(R.string.next)
+        .performClick()
+    navController.assertCurrentRouteName(CupcakeScreen.Pickup.name)
+}
+
+@Test
+fun cupcakeNavHost_clickBackOnFlavorScreen_navigatesToStartOrderScreen() {
+    navigateToFlavorScreen()
+    performNavigateUp()
+    navController.assertCurrentRouteName(CupcakeScreen.Start.name)
+}
+
+@Test
+fun cupcakeNavHost_clickCancelOnFlavorScreen_navigatesToStartOrderScreen() {
+    navigateToFlavorScreen()
+    composeTestRule.onNodeWithStringId(R.string.cancel)
+        .performClick()
+    navController.assertCurrentRouteName(CupcakeScreen.Start.name)
+}
+
+@Test
+fun cupcakeNavHost_clickNextOnPickupScreen_navigatesToSummaryScreen() {
+    navigateToPickupScreen()
+    composeTestRule.onNodeWithText(getFormattedDate())
+        .performClick()
+    composeTestRule.onNodeWithStringId(R.string.next)
+        .performClick()
+    navController.assertCurrentRouteName(CupcakeScreen.Summary.name)
+}
+
+@Test
+fun cupcakeNavHost_clickBackOnPickupScreen_navigatesToFlavorScreen() {
+    navigateToPickupScreen()
+    performNavigateUp()
+    navController.assertCurrentRouteName(CupcakeScreen.Flavor.name)
+}
+
+@Test
+fun cupcakeNavHost_clickCancelOnPickupScreen_navigatesToStartOrderScreen() {
+    navigateToPickupScreen()
+    composeTestRule.onNodeWithStringId(R.string.cancel)
+        .performClick()
+    navController.assertCurrentRouteName(CupcakeScreen.Start.name)
+}
+
+@Test
+fun cupcakeNavHost_clickCancelOnSummaryScreen_navigatesToStartOrderScreen() {
+    navigateToSummaryScreen()
+    composeTestRule.onNodeWithStringId(R.string.cancel)
+        .performClick()
+    navController.assertCurrentRouteName(CupcakeScreen.Start.name)
+}
+```
+
+>[!NOTE]
+> `assertCurrentRouteName`은 NavController 클래스에 확장함수를 추가한 것이다. 이러한 함수를 `도우미 함수`라고 하며, 여러 테스트에서 반복적으로 불리는 코드들을 이런 식으로 관리할 수 있다.
+>
+> 기타 메서드들도 모두 도우미 메서드들이다.
+
+
+
+
